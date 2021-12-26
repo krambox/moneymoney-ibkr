@@ -1,5 +1,5 @@
 WebBanking {
-    version = 1.0,
+    version = 0.1,
     country = "de",
     description = "Include your IBKR stock portfolio in MoneyMoney.",
     services = {"IBKR"}
