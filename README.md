@@ -4,7 +4,7 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Setup
 
-1. Download the extension via  GitHub 
+1. Download the extension via  GitHub  https://github.com/krambox/moneymoney-ibkr/releases
 2. Once downloaded, move `ibkr.lua` to your MoneyMoney Extensions folder.
 3. Setup a IBKR Flex Query and activate Flex-Web-Service
    1. Flexquery Section
