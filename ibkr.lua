@@ -1,5 +1,5 @@
 WebBanking {
-    version = 1.0,
+    version = 0.1,
     country = "de",
     description = "Include your IBKR stock portfolio in MoneyMoney.",
     services = {"IBKR"}
@@ -111,3 +111,5 @@ end
 function EndSession()
     -- Logout.
 end
+
+-- SIGNATURE: MC0CFBZyTf3ayQ3lCZahDjxYsb8DbWX8AhUAkLzNi07pLujOVhGhtD6HhjjsJeM=
