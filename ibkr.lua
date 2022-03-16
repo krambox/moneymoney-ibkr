@@ -1,5 +1,5 @@
 WebBanking {
-    version = 0.3,
+    version = 0.2,
     country = "de",
     description = "Include your IBKR stock portfolio in MoneyMoney.",
     services = {"IBKR"}
@@ -137,16 +137,18 @@ function RefreshAccount(account, since)
             print(p)
             local sm = parseargs(p)
             print(sm.reportDate,sm.settleDate,sm.description,sm.activityDescription,sm.amount,sm.activityCode)
-            transactions[#transactions + 1] = {
-                name=sm.description,
-                amount=sm.amount,
-                currency="EUR",
-                bookingDate=stringToTimestamp(sm.reportDate),
-                valueDate=stringToTimestamp(sm.settleDate),
-                transactionCode=sm.transactionID,
-                purpose=sm.activityDescription,
-                bookingText=sm.activityCode
-            }
+            if not activityCode  ==  'ADJ' then
+                transactions[#transactions + 1] = {
+                    name=sm.description,
+                    amount=sm.amount,
+                    currency="EUR",
+                    bookingDate=stringToTimestamp(sm.reportDate),
+                    valueDate=stringToTimestamp(sm.settleDate),
+                    transactionCode=sm.transactionID,
+                    purpose=sm.activityDescription,
+                    bookingText=sm.activityCode
+                }
+            end
         end
         -- Return balance and array of transactions.
         return {
