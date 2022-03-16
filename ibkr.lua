@@ -1,5 +1,5 @@
 WebBanking {
-    version = 0.2,
+    version = 0.3,
     country = "de",
     description = "Include your IBKR stock portfolio in MoneyMoney.",
     services = {"IBKR"}
@@ -7,8 +7,13 @@ WebBanking {
 
 local parseargs = function(s)
     local arg = {}
-    string.gsub(s, "([%-%w]+)=([\"'])(.-)%2", function(w, _, a)
-        arg[w] = a
+    string.gsub(s, "([%-%w]+)=([\"'])(.-)%2", function(w, _, value)
+        value = string.gsub(value, "&quot;", "\"");
+        value = string.gsub(value, "&apos;", "'");
+        value = string.gsub(value, "&gt;", ">");
+        value = string.gsub(value, "&lt;", "<");
+        value = string.gsub(value, "&amp;", "&");
+        arg[w] = value
     end)
     return arg
 end
