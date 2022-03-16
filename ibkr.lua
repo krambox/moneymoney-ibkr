@@ -1,5 +1,5 @@
 WebBanking {
-    version = 0.1,
+    version = 0.2,
     country = "de",
     description = "Include your IBKR stock portfolio in MoneyMoney.",
     services = {"IBKR"}
@@ -30,7 +30,7 @@ function InitializeSession(protocol, bankCode, username, customer, password)
     token = password
     query = username
     connection = Connection()
-    local content = connection:get(
+    local content, charset, mimeType = connection:get(
         "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest?t=" .. token .. "&q=" ..
             query .. "&v=3")
     local status = string.match(content, "^.+<Status>(.+)</Status>.+$")
@@ -62,13 +62,31 @@ end
 
 local statementContent
 
+function stringToTimestamp(str)
+    local datePattern = '(%d%d%d%d)(%d%d)(%d%d)'
+    local year, month, day  = str:match(datePattern)
+    if year and month and day then
+        local timestamp = os.time{day=day,month=month,year=year}
+        return timestamp
+    end
+end
+
 function RefreshAccount(account, since)
     print("RefreshAccount " .. JSON():set(account):json())
 
     if statementContent == nil then
-        statementContent = connection:get(
-            "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
-                "&q=" .. code .. "&v=3")
+        local ec
+        repeat
+            statementContent, charset, mimeType = connection:get(
+                "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
+                    "&q=" .. code .. "&v=3")
+            local ec=parseBlock(statementContent, 'ErrorCode')
+            if ec=="1019" then
+                MM.sleep(1)
+            end
+
+        until ec ~="1019"
+
     end
     if account.accountNumber == "1" then
         local positions = parseBlock(statementContent, 'OpenPositions')
@@ -77,16 +95,23 @@ function RefreshAccount(account, since)
             print(p)
             local pos = parseargs(p)
             securities[#securities + 1] = {
-                name = pos.symbol,
+                name = pos.description,
+                isin = pos.isin,
                 securityNumber = pos.isin,
                 market = pos.listingExchange,
                 quantity = pos.position * pos.multiplier,
+                originalCurrencyAmount = pos.positionValue,
+                currencyOfOriginalAmount = pos.currency,
                 price = pos.markPrice,
                 currencyOfPrice = pos.currency,
                 purchasePrice = pos.costBasisPrice,
                 currencyOfPurchasePrice = pos.currency,
-                exchangeRate = pos.fxRateToBase
+                exchangeRate = 1 / pos.fxRateToBase,
+                userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized*pos.fxRateToBase) .. " EUR / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
+                --userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized) .. " USD / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
+
             }
+
         end
         -- Return balance and array of transactions.
         return {
@@ -100,10 +125,28 @@ function RefreshAccount(account, since)
             local pos = parseargs(p)
             cash = pos.cash
         end
+        --  array of transactions.
+        local summary = parseBlock(statementContent, 'StmtFunds')
+        local transactions = {}
+        for p in summary:gmatch("<StatementOfFundsLine(.-)/>") do
+            print(p)
+            local sm = parseargs(p)
+            print(sm.reportDate,sm.settleDate,sm.description,sm.activityDescription,sm.amount,sm.activityCode)
+            transactions[#transactions + 1] = {
+                name=sm.description,
+                amount=sm.amount,
+                currency="EUR",
+                bookingDate=stringToTimestamp(sm.reportDate),
+                valueDate=stringToTimestamp(sm.settleDate),
+                transactionCode=sm.transactionID,
+                purpose=sm.activityDescription,
+                bookingText=sm.activityCode
+            }
+        end
         -- Return balance and array of transactions.
         return {
             balance = cash,
-            transactions = {}
+            transactions = transactions
         }
     end
 end
@@ -111,5 +154,3 @@ end
 function EndSession()
     -- Logout.
 end
-
--- SIGNATURE: MC0CFBZyTf3ayQ3lCZahDjxYsb8DbWX8AhUAkLzNi07pLujOVhGhtD6HhjjsJeM=
