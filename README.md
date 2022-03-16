@@ -4,7 +4,7 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Release Notes
 
-### 0.2
+### 0.2 (not released)
 
 - Support Statements
 - Quote XML Chars
