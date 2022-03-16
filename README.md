@@ -2,6 +2,18 @@
 
 Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
+## Release Notes
+
+### 0.2
+
+- Support Statements
+- Quote XML Chars
+- Ignore 'ADJ' activities in Statements
+
+### 0.1
+
+- Initial Version
+
 ## Setup
 
 1. Download the extension via  GitHub  https://github.com/krambox/moneymoney-ibkr/releases
