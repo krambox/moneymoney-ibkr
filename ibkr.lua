@@ -134,10 +134,10 @@ function RefreshAccount(account, since)
         local summary = parseBlock(statementContent, 'StmtFunds')
         local transactions = {}
         for p in summary:gmatch("<StatementOfFundsLine(.-)/>") do
-            print(p)
+            --print(p)
             local sm = parseargs(p)
-            print(sm.reportDate,sm.settleDate,sm.description,sm.activityDescription,sm.amount,sm.activityCode)
-            if not activityCode  ==  'ADJ' then
+            print(#transactions,sm.transactionID,sm.reportDate,sm.settleDate,sm.description,sm.activityDescription,sm.amount,sm.activityCode)
+            if sm.activityCode  ~=  'ADJ' then
                 transactions[#transactions + 1] = {
                     name=sm.description,
                     amount=sm.amount,
@@ -151,6 +151,7 @@ function RefreshAccount(account, since)
             end
         end
         -- Return balance and array of transactions.
+        --print(JSON():set(transactions):json())
         return {
             balance = cash,
             transactions = transactions
