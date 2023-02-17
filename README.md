@@ -4,11 +4,12 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Release Notes
 
-### 0.2 (not released)
+### 0.2
 
 - Support Statements
 - Quote XML Chars
 - Ignore 'ADJ' activities in Statements
+- Fix (some) foreign currencies issues
 
 ### 0.1
 
