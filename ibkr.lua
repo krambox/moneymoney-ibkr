@@ -112,6 +112,7 @@ function RefreshAccount(account, since)
               purchasePrice = pos.costBasisPrice,
               currencyOfPurchasePrice = pos.currency,
               exchangeRate = 1 / pos.fxRateToBase,
+              amount = pos.positionValue * pos.fxRateToBase,
               userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized*pos.fxRateToBase) .. " EUR / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
               --userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized) .. " USD / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
 
