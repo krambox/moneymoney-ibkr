@@ -36,7 +36,7 @@ function InitializeSession(protocol, bankCode, username, customer, password)
   query = username
   connection = Connection()
   local content, charset, mimeType = connection:get(
-      "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest?t=" .. token .. "&q=" ..
+      "https://ndcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest?t=" .. token .. "&q=" ..
           query .. "&v=3")
   local status = string.match(content, "^.+<Status>(.+)</Status>.+$")
   if status == "Success" then
@@ -83,7 +83,7 @@ function RefreshAccount(account, since)
       local ec
       repeat
           statementContent, charset, mimeType = connection:get(
-              "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
+              "https://ndcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
                   "&q=" .. code .. "&v=3")
           local ec=parseBlock(statementContent, 'ErrorCode')
           if ec=="1019" then
