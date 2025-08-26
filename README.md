@@ -4,6 +4,10 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Release Notes
 
+### 0.3
+
+- Update IB Endpoint
+
 ### 0.2
 
 Attention: You must extend your Flex query Statement Of Funds
