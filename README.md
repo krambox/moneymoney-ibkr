@@ -4,9 +4,13 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Release Notes
 
+### 0.4
+
+- FIX: currency conversion https://github.com/krambox/moneymoney-ibkr/pull/8
+
 ### 0.3
 
-- Update IB Endpoint
+- Update IB Endpoint https://github.com/krambox/moneymoney-ibkr/pull/18
 
 ### 0.2
 
