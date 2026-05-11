@@ -35,9 +35,9 @@ function InitializeSession(protocol, bankCode, username, customer, password)
   token = password
   query = username
   connection = Connection()
-  local content, charset, mimeType = connection:get(
-      "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest?t=" .. token .. "&q=" ..
-          query .. "&v=3")
+  local url = "https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/SendRequest?t=" .. token .. "&q=" .. query .. "&v=3"
+  local content = connection:request("GET", url, "", "", {["User-Agent"] = "MoneyMoney IBKR Plugin"})
+  local charset, mimeType = nil, nil
   local status = parseBlock(content, 'Status')
   if status == "Success" then
       code = parseBlock(content, 'ReferenceCode')
@@ -87,9 +87,9 @@ function RefreshAccount(account, since)
   if statementContent == nil then
       local ec
       repeat
-          statementContent, charset, mimeType = connection:get(
-              "https://gdcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
-                  "&q=" .. code .. "&v=3")
+          local url = "https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/GetStatement?t=" .. token .. "&q=" .. code .. "&v=3"
+          statementContent = connection:request("GET", url, "", "", {["User-Agent"] = "MoneyMoney IBKR Plugin"})
+          charset, mimeType = nil, nil
           local ec=parseBlock(statementContent, 'ErrorCode')
           if ec=="1019" then
               MM.sleep(1)
