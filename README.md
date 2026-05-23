@@ -6,7 +6,7 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ### 0.5
 
-- FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors
+- FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors https://github.com/krambox/moneymoney-ibkr/pull/21
 
 ### 0.4
 
