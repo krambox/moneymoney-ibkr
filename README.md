@@ -1,20 +1,20 @@
-# MoneyMoney-IBKR Extension
+# MoneyMoney IBKR Extension
 
-Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
+Unofficial IBKR extension for MoneyMoney.
 
 ## Release Notes
 
 ### 0.5
 
-- FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors https://github.com/krambox/moneymoney-ibkr/pull/21
+- FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors ([#21](https://github.com/krambox/moneymoney-ibkr/pull/21))
 
 ### 0.4
 
-- FIX: currency conversion https://github.com/krambox/moneymoney-ibkr/pull/8
+- FIX: currency conversion ([#8](https://github.com/krambox/moneymoney-ibkr/pull/8))
 
 ### 0.3
 
-- Update IB Endpoint https://github.com/krambox/moneymoney-ibkr/pull/18
+- Update IB endpoint ([#18](https://github.com/krambox/moneymoney-ibkr/pull/18))
 
 ### 0.2
 
@@ -31,20 +31,20 @@ Attention: You must extend your Flex query Statement Of Funds
 
 ## Setup
 
-1. Download the extension from https://moneymoney.app/extensions/ (https://moneymoney.app/extensions/ibkr.lua)
-2. Once downloaded, move `ibkr.lua` to your MoneyMoney Extensions folder.
-3. Setup a IBKR Flex Query and activate Flex-Web-Service
-    1. Flexquery Section
-      <img src="Flexquery Sections.png" align="middle"/>
-    2. Flexquery NAC
-      <img src="Flexquery NAC.png" align="middle"/>
-    3. Flexquery Open Positions
-      <img src="Flexquery Open Positions.png" align="middle"/>
-    4. Flexquery Statement Of Funds
-      <img src="Flexquery StatementOfFunds.png" align="middle"/>
-    4. Flexquery Configuration
-      <img src="Flexquery Configuration.png" align="middle"/>
-    
-4.  Use the Flex Query ID as User and the Flex-Web-Service token as password
-5.  Add a new account with the type `IBKR`
-6.  The extension provides 2 accounts. One AccountTypePortfolio for the open positions and one  AccountTypeOther for the cash balance. 
+1. Download the extension from [moneymoney.app/extensions](https://moneymoney.app/extensions/) ([direct link](https://moneymoney.app/extensions/ibkr.lua)).
+2. Move `ibkr.lua` to your MoneyMoney Extensions folder.
+3. Set up an IBKR Flex Query and activate the Flex Web Service.
+    1. Flex Query Sections
+      ![Flex Query Sections](<Flexquery Sections.png>)
+    2. Flex Query NAC
+      ![Flex Query NAC](<Flexquery NAC.png>)
+    3. Flex Query Open Positions
+      ![Flex Query Open Positions](<Flexquery Open Positions.png>)
+    4. Flex Query Statement Of Funds
+      ![Flex Query Statement Of Funds](Flexquery StatementOfFunds.png)
+    5. Flex Query Configuration
+      ![Flex Query Configuration](<Flexquery Configuration.png>)
+
+4. Use the Flex Query ID as the username and the Flex Web Service token as the password.
+5. Add a new account with the type `IBKR`.
+6. The extension provides two EUR accounts: one `AccountTypePortfolio` account for open positions and one `AccountTypeOther` account for the cash balance.
