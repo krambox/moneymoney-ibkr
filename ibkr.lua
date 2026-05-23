@@ -1,5 +1,5 @@
 WebBanking {
-  version = 0.4,
+  version = 0.2,
   country = "de",
   description = "Include your IBKR stock portfolio in MoneyMoney.",
   services = {"IBKR"}
@@ -19,7 +19,7 @@ local parseargs = function(s)
 end
 
 local parseBlock = function(content, k)
-  return string.match(content, "^.+<" .. k .. ">(.+)</" .. k .. ">.+$")
+  return string.match(content, "<" .. k .. ">([%s%S]-)</" .. k .. ">")
 end
 
 local connection = Connection()
@@ -35,15 +35,20 @@ function InitializeSession(protocol, bankCode, username, customer, password)
   token = password
   query = username
   connection = Connection()
-  local content, charset, mimeType = connection:get(
-      "https://ndcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.SendRequest?t=" .. token .. "&q=" ..
-          query .. "&v=3")
-  local status = string.match(content, "^.+<Status>(.+)</Status>.+$")
+  local url = "https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/SendRequest?t=" .. token .. "&q=" .. query .. "&v=3"
+  local content = connection:request("GET", url, "", "", {["User-Agent"] = "MoneyMoney IBKR Plugin"})
+  local charset, mimeType = nil, nil
+  local status = parseBlock(content, 'Status')
   if status == "Success" then
-      code = string.match(content, "^.+<ReferenceCode>(.+)</ReferenceCode>.+$")
+      code = parseBlock(content, 'ReferenceCode')
       print("8:" .. code)
   else
-      return content
+      local errorMsg = parseBlock(content, 'ErrorMessage')
+      if errorMsg then
+          return "IBKR API Error: " .. errorMsg
+      else
+          return content
+      end
   end
 end
 
@@ -82,10 +87,10 @@ function RefreshAccount(account, since)
   if statementContent == nil then
       local ec
       repeat
-          statementContent, charset, mimeType = connection:get(
-              "https://ndcdyn.interactivebrokers.com/Universal/servlet/FlexStatementService.GetStatement?t=" .. token ..
-                  "&q=" .. code .. "&v=3")
-          ec=parseBlock(statementContent, 'ErrorCode')
+          local url = "https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/GetStatement?t=" .. token .. "&q=" .. code .. "&v=3"
+          statementContent = connection:request("GET", url, "", "", {["User-Agent"] = "MoneyMoney IBKR Plugin"})
+          charset, mimeType = nil, nil
+          local ec=parseBlock(statementContent, 'ErrorCode')
           if ec=="1019" then
               MM.sleep(1)
           end
@@ -114,8 +119,6 @@ function RefreshAccount(account, since)
               exchangeRate = 1 / pos.fxRateToBase,
               amount = pos.positionValue * pos.fxRateToBase,
               userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized*pos.fxRateToBase) .. " EUR" .. (pos.costBasisMoney ~= "0" and (" / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %") or "")}}
-              --userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized) .. " USD / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
-
           }
 
       end
@@ -164,3 +167,4 @@ function EndSession()
   -- Logout.
 end
 
+-- SIGNATURE: MCsCFHF+25SfP/5FOEXYuH4H1XCoVDF7AhNF3D9StNKYUYIheUUOaFSh8dDr
