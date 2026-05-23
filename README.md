@@ -4,6 +4,8 @@ Unofficial IBKR extension for MoneyMoney.
 
 ## Release Notes
 
+*** Warning - currently not signed by MoneyMoney. Waiting for approval. So you have to allow unsigned extensions in the settings. ***
+
 ### 0.5
 
 - FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors ([#21](https://github.com/krambox/moneymoney-ibkr/pull/21))
