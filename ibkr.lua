@@ -247,7 +247,8 @@ function RefreshAccount(account, since)
               isin = pos.isin,
               securityNumber = pos.isin,
               market = pos.listingExchange,
-              quantity = position * multiplier,
+              -- Futures: report number of contracts. Stocks/options keep share-equivalent (position x multiplier).
+              quantity = pos.assetCategory == "FUT" and position or position * multiplier,
               originalAmount = positionValue,
               originalCurrencyAmount = positionValue,
               currencyOfOriginalAmount = pos.currency,
@@ -258,7 +259,11 @@ function RefreshAccount(account, since)
               exchangeRateOfPrice = fxRateToBase,
               exchangeRateOfPurchasePrice = fxRateToBase,
               exchangeRate = 1 / fxRateToBase,
-              amount = positionValue * fxRateToBase,
+              -- Futures contribute 0 to NAV: IB settles futures variation margin to cash daily,
+              -- so the P&L is already reflected in the cash balance; counting positionValue
+              -- (notional) OR fifoPnlUnrealized here double-counts. Verified against IB Net
+              -- Liquidation Value. (Position is still visible via quantity + the _profit label.)
+              amount = (pos.assetCategory == "FUT" and 0 or positionValue) * fxRateToBase,
               userdata = {{key="_profit",value=string.format("%.02f", fifoPnlUnrealized*fxRateToBase) .. " EUR / " .. string.format("%.05f", profitPercent) .. " %"}}
               --userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized) .. " USD / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
 
