@@ -4,6 +4,10 @@ Unofficial IBKR extension for MoneyMoney.
 
 ## Release Notes
 
+### 0.6
+
+- FIX: MoneyMoney showed inconsistent purchase vs. mark prices for foreign-denominated positions when `exchangeRateOf*` was set; derive both rates in account currency from `costBasisMoney` and `positionValue` via `fxRateToBase`.
+
 ### 0.5
 
 - FIX: use current IBKR Flex Web Service endpoint and retry temporary Flex statement errors ([#21](https://github.com/krambox/moneymoney-ibkr/pull/21))

@@ -1,5 +1,5 @@
 WebBanking {
-  version = 0.5,
+  version = 0.6,
   country = "de",
   description = "Include your IBKR stock portfolio in MoneyMoney.",
   services = {"IBKR"}
@@ -233,35 +233,37 @@ function RefreshAccount(account, since)
           local position = tonumber(pos.position) or 0
           local multiplier = tonumber(pos.multiplier) or 1
           local positionValue = tonumber(pos.positionValue) or 0
-          local markPrice = tonumber(pos.markPrice) or 0
-          local costBasisPrice = tonumber(pos.costBasisPrice) or 0
           local fxRateToBase = tonumber(pos.fxRateToBase) or 1
           local fifoPnlUnrealized = tonumber(pos.fifoPnlUnrealized) or 0
           local costBasisMoney = tonumber(pos.costBasisMoney) or 0
+          local quantity = position * multiplier
+          if quantity == 0 then
+              quantity = 1
+          end
+          local baseCurr = account.currency or "EUR"
+          local amountBase = positionValue * fxRateToBase
+          local costBase = costBasisMoney * fxRateToBase
+          -- Kauf-/Marktkurs in Kontowährung, damit MM-Anzeige zum IBKR-Gewinn passt
+          -- (reine Fremdwährungskurse + exchangeRateOf* führen zu widersprüchlichen €-Kursen).
+          local priceInBase = amountBase / quantity
+          local purchaseInBase = costBase / quantity
           local profitPercent = 0
-          if costBasisMoney ~= 0 then
-              profitPercent = 100 / costBasisMoney * positionValue - 100
+          if costBase ~= 0 then
+              profitPercent = amountBase / costBase * 100 - 100
           end
           securities[#securities + 1] = {
               name = pos.description,
               isin = pos.isin,
               securityNumber = pos.isin,
               market = pos.listingExchange,
-              quantity = position * multiplier,
+              quantity = quantity,
               originalAmount = positionValue,
               originalCurrencyAmount = positionValue,
               currencyOfOriginalAmount = pos.currency,
-              price = markPrice,
-              currencyOfPrice = pos.currency,
-              purchasePrice = costBasisPrice,
-              currencyOfPurchasePrice = pos.currency,
-              exchangeRateOfPrice = fxRateToBase,
-              exchangeRateOfPurchasePrice = fxRateToBase,
-              exchangeRate = 1 / fxRateToBase,
-              amount = positionValue * fxRateToBase,
-              userdata = {{key="_profit",value=string.format("%.02f", fifoPnlUnrealized*fxRateToBase) .. " EUR / " .. string.format("%.05f", profitPercent) .. " %"}}
-              --userdata = {{key="_profit",value=string.format("%.02f", pos.fifoPnlUnrealized) .. " USD / " .. string.format("%.05f", 100/pos.costBasisMoney*pos.positionValue-100) .. " %"}}
-
+              price = priceInBase,
+              purchasePrice = purchaseInBase,
+              amount = amountBase,
+              userdata = {{key="_profit",value=string.format("%.02f", fifoPnlUnrealized*fxRateToBase) .. " " .. baseCurr .. (costBase ~= 0 and (" / " .. string.format("%.05f", profitPercent) .. " %") or "")}}
           }
 
       end
