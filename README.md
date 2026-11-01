@@ -4,6 +4,10 @@ Inofficial IBKR Extension for MoneyMoney and EUR Accounts.
 
 ## Release Notes
 
+### 0.7
+
+- FIX: Kaufkurs vs. aktueller Kurs in MoneyMoney widersprachen dem angezeigten Gewinn bei USD-/Fremdwährungs-ETFs (Kurse jetzt konsistent in Kontowährung aus `costBasisMoney`/`positionValue`).
+
 ### 0.4
 
 - FIX: currency conversion https://github.com/krambox/moneymoney-ibkr/pull/8
